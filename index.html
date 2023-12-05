@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lista de Compras</title>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: white;
+      }
+      .contenedor {
+        background-color: rgb(236, 234, 234);
+        max-width: 680px;
+        margin: auto;
+        padding: 16px;
+        border: 1px solid #d4d4d4;
+        border-radius: 3px;
+        box-shadow: 7px 7px 15px 0px #d4d4d4;
+      }
+      .contenedor h1 {
+        text-align: center;
+        color: black;
+        border-bottom: 1px solid #d4d4d4;
+      }
+      .contenedor-input {
+        justify-content: center;
+        gap: 0 10px;
+        font-size: 18px;
+        color: black;
+        display: flex;
+      }
+      .contenedor-input input {
+        font-size: 16px;
+        padding: 5px 12px;
+        background-color: #d4d4d4;
+        border: 1px solid black;
+        border-radius: 3px;
+      }
+      .contenedor-input input:focus-visible {
+        background-color: rgb(255, 255, 255);
+        outline: 0px solid rgb (233, 254, 255);
+        box-shadow: 7px 7px 15px 0px #d4d4d4;
+      }
+      .tarea {
+        display: flex;
+        justify-content: space-between;
+        width: 360px;
+        gap: 0 10px;
+        margin: 8px auto;
+        padding: 8px;
+      }
+      .tarea:hover {
+        background: #f0f4f5;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="contenedor">
+        <h1>Lista de Compras</h1>
+        <div class="contenedor-input">
+          <input
+            type="text"
+            placeholder="Item Para Nuestra Casa"
+            v-model="NuevaCompraRef"
+            v-on:keyup.enter="agregarCompraNueva"
+          />
+          <span>{{ NuevaCompraRef }}</span>
+        </div>
+        <div v-for="(compra, index) in listaDeComprasRef" :key="index">
+          <input type="checkbox" v-model="compra.realizado" />
+          <span
+            @click="compra.realizado = compra.realizado"
+            :style="{textDecoration: compra.realizado ? 'line-through' : 'none'}"
+          >
+            {{ index+1 }} - > {{ compra.texto }}</span
+          >
+          <button @click="eliminarCompra(index)">Eliminar</button>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.0/dist/vue.global.prod.js"></script>
+    <script>
+      const { reactive, ref } = Vue;
+      const app = Vue.createApp({
+        setup() {
+          const listaDeComprasRef = reactive([]);
+          const NuevaCompraRef = ref("");
+
+          const agregarCompraNueva = () => {
+            if (NuevaCompraRef.value.trim() === "") return;
+            listaDeComprasRef.push({
+              texto: NuevaCompraRef.value,
+              realizado: false,
+            });
+            NuevaCompraRef.value = "";
+          };
+
+          const eliminarCompra = (index) => {
+            try {
+              const eliminar = confirm("¿Eliminar Compra?");
+              if (!eliminar) return;
+              listaDeComprasRef.splice(index, 1);
+            } catch (error) {
+              console.error(error);
+            }
+          };
+
+          return {
+            NuevaCompraRef,
+            listaDeComprasRef,
+            agregarCompraNueva,
+            eliminarCompra,
+          };
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>
